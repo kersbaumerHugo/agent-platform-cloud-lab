@@ -1,0 +1,30 @@
+# OpenTofu / Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+
+# Secrets
+*.pem
+*.key
+*.pfx
+.env
+.env.*
+
+# Ansible
+*.retry
+
+# Kubernetes
+kubeconfig
+kubeconfig.*
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
