@@ -2,7 +2,6 @@
 .terraform/
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
 crash.log
 
 # Secrets
@@ -31,3 +30,7 @@ __pycache__/
 
 # Floci local state
 /infra/floci/data/
+
+# OpenTofu saved plans
+tfplan
+*.tfplan
