@@ -29,8 +29,12 @@ __pycache__/
 .DS_Store
 
 # Floci local state
-/infra/floci/data/
 
 # OpenTofu saved plans
-tfplan
+
+# Local cloud emulator state
+/infra/emulators/*/data/
+
+# OpenTofu saved execution plans
+tfplan*
 *.tfplan
