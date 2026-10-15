@@ -95,3 +95,29 @@ resource "aws_route" "public_internet" {
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.agent_platform.id
 }
+resource "aws_eip" "nat" {
+  domain = "vpc"
+
+  tags = {
+    Name = "eip-agent-platform-nat"
+  }
+}
+
+resource "aws_nat_gateway" "agent_platform" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public_a.id
+
+  tags = {
+    Name = "nat-agent-platform-local"
+  }
+
+  depends_on = [
+    aws_internet_gateway.agent_platform
+  ]
+}
+
+resource "aws_route" "private_internet" {
+  route_table_id         = aws_route_table.private.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.agent_platform.id
+}
