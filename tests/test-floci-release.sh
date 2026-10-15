@@ -16,7 +16,7 @@ BOOTSTRAP="$APP_ROOT/releases/bootstrap/handler.sh"
 sh "$ACT" prepare  # idempotent
 [[ "$(readlink "$APP_ROOT/health-handler.sh")" == "$BOOTSTRAP" ]]
 
-for release in v1.0.0 v1.1.0 v1.2.0-bad; do
+for release in v1.0.0 v1.1.0 v1.2.0-bad v1.3.0 v1.4.0-badlogic; do
   mkdir -p "$APP_ROOT/releases/$release"
   cp "$ROOT/apps/floci-http/releases/$release/handler.sh" "$APP_ROOT/releases/$release/handler.sh"
   chmod +x "$APP_ROOT/releases/$release/handler.sh"
