@@ -7,16 +7,20 @@ on:
       - 'apps/floci-http/**'
       - 'scripts/check-floci-ec2-health.sh'
       - 'scripts/deploy-floci-ec2-app.sh'
+      - 'scripts/check-floci-ec2-functional.sh'
       - 'tests/test-floci-readiness.sh'
       - 'tests/test-floci-release.sh'
+      - 'tests/test-floci-functional.sh'
       - '.github/workflows/floci-readiness-ci.yml'
   pull_request:
     paths:
       - 'apps/floci-http/**'
       - 'scripts/check-floci-ec2-health.sh'
       - 'scripts/deploy-floci-ec2-app.sh'
+      - 'scripts/check-floci-ec2-functional.sh'
       - 'tests/test-floci-readiness.sh'
       - 'tests/test-floci-release.sh'
+      - 'tests/test-floci-functional.sh'
       - '.github/workflows/floci-readiness-ci.yml'
 
 permissions:
@@ -30,8 +34,12 @@ jobs:
       - name: Validate scripts
         run: |
           bash -n scripts/deploy-floci-ec2-app.sh
+          bash -n scripts/check-floci-ec2-functional.sh
           sh -n apps/floci-http/activate.sh
+          for handler in apps/floci-http/releases/*/handler.sh; do sh -n "$handler"; done
       - name: Readiness contract (no Floci needed)
         run: bash tests/test-floci-readiness.sh
       - name: Release and rollback contract (no Floci needed)
         run: bash tests/test-floci-release.sh
+      - name: Functional HTTP release contracts (no Floci needed)
+        run: bash tests/test-floci-functional.sh

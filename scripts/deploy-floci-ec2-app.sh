@@ -58,16 +58,18 @@ if HEALTH_TIMEOUT_SECONDS="${DEPLOY_TIMEOUT_SECONDS:-20}" \
     bash "$ROOT/scripts/check-floci-ec2-health.sh" \
     && ACTUAL="$(timeout 5s docker exec "$CONTAINER" \
          wget -qO- -T 2 http://127.0.0.1:8080/version 2>/dev/null)" \
-    && [[ "$ACTUAL" == "$VERSION" ]]; then
-  echo "[PASS] Release $VERSION is ready (/health=ok, /version=$VERSION)."
+    && [[ "$ACTUAL" == "$VERSION" ]] \
+    && bash "$ROOT/scripts/check-floci-ec2-functional.sh" "$CONTAINER"; then
+  echo "[PASS] Release $VERSION passed readiness, version and functional smoke."
   exit 0
 fi
 
-echo "[ROLLBACK] Release $VERSION failed readiness/version check; restoring $PREVIOUS." >&2
+echo "[ROLLBACK] Release $VERSION failed readiness/version/functional gate; restoring $PREVIOUS." >&2
 remote_activate restore "$PREVIOUS"
 if HEALTH_TIMEOUT_SECONDS=15 HEALTH_INTERVAL_SECONDS=2 \
-    bash "$ROOT/scripts/check-floci-ec2-health.sh"; then
-  echo "[RECOVERED] Previous release is healthy: $PREVIOUS" >&2
+    bash "$ROOT/scripts/check-floci-ec2-health.sh" \
+    && bash "$ROOT/scripts/check-floci-ec2-functional.sh" "$CONTAINER"; then
+  echo "[RECOVERED] Previous release passed readiness and functional smoke: $PREVIOUS" >&2
 else
   echo "[CRITICAL] Rollback performed, but previous release is NOT healthy." >&2
 fi
