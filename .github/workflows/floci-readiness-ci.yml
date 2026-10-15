@@ -1,0 +1,25 @@
+name: Floci EC2 readiness test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/check-floci-ec2-health.sh'
+      - 'tests/test-floci-readiness.sh'
+      - '.github/workflows/floci-readiness-ci.yml'
+  pull_request:
+    paths:
+      - 'scripts/check-floci-ec2-health.sh'
+      - 'tests/test-floci-readiness.sh'
+      - '.github/workflows/floci-readiness-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate readiness logic (without AWS or Floci)
+        run: bash tests/test-floci-readiness.sh
