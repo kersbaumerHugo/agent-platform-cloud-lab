@@ -1,16 +1,22 @@
-name: Floci EC2 readiness test
+name: Floci EC2 local release contract tests
 
 on:
   push:
     branches: [main]
     paths:
+      - 'apps/floci-http/**'
       - 'scripts/check-floci-ec2-health.sh'
+      - 'scripts/deploy-floci-ec2-app.sh'
       - 'tests/test-floci-readiness.sh'
+      - 'tests/test-floci-release.sh'
       - '.github/workflows/floci-readiness-ci.yml'
   pull_request:
     paths:
+      - 'apps/floci-http/**'
       - 'scripts/check-floci-ec2-health.sh'
+      - 'scripts/deploy-floci-ec2-app.sh'
       - 'tests/test-floci-readiness.sh'
+      - 'tests/test-floci-release.sh'
       - '.github/workflows/floci-readiness-ci.yml'
 
 permissions:
@@ -21,5 +27,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate readiness logic (without AWS or Floci)
+      - name: Validate scripts
+        run: |
+          bash -n scripts/deploy-floci-ec2-app.sh
+          sh -n apps/floci-http/activate.sh
+      - name: Readiness contract (no Floci needed)
         run: bash tests/test-floci-readiness.sh
+      - name: Release and rollback contract (no Floci needed)
+        run: bash tests/test-floci-release.sh
